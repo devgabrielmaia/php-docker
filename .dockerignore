@@ -1,1 +1,44 @@
-/api/tests
+# VCS / IDE
+.git
+.gitignore
+.gitattributes
+.vscode
+.idea
+*.swp
+*.swo
+
+# Nunca copiar dependências do host — sobrescrevem o composer/npm da imagem
+/vendor
+/node_modules
+
+# Nunca env com secrets no contexto de build (runtime no servidor via compose)
+.env
+.env.backup
+.env.production
+.env.local
+.env.*.local
+.env.development
+.env.testing
+
+# Artefatos e caches locais
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+.php_cs.cache
+.php-cs-fixer.cache
+coverage
+.phpstan.result.cache
+phpstan.neon
+psalm.xml
+rector.php
+pint.json
+
+# Documentação e automação local (não usados em runtime)
+*.md
+README*
+Makefile
+docker-compose*.yml
+docker-compose*.yaml
+Dockerfile*
+.dockerignore
