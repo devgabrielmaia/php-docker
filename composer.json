@@ -1,0 +1,15 @@
+{
+    "name": "devgabrielmaia/php-docker",
+    "autoload": {
+        "psr-4": {
+            "Devgabrielmaia\\PhpDocker\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "devgabrielmaia",
+            "email": "gabrielmaia.web@gmail.com"
+        }
+    ],
+    "require": {}
+}

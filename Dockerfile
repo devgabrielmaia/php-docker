@@ -36,21 +36,22 @@ RUN docker-php-ext-install \
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # PHP configuration
-COPY docker/php/php.ini /usr/local/etc/php/conf.d/app.ini
+COPY config/php.ini /usr/local/etc/php/conf.d/app.ini
+COPY config/zz-custom.conf /usr/local/etc/php-fpm.d/zz-custom.conf
 
 ############################################
 # FRONTEND BUILDER
 ############################################
-FROM node:20-alpine AS frontend-builder
-WORKDIR /app
-ENV NODE_OPTIONS=--openssl-legacy-provider
-COPY package*.json ./
-RUN npm ci --no-audit --no-fund
-COPY webpack.mix.js ./
-COPY artisan ./
-COPY resources ./resources
-COPY public ./public
-RUN npm run production
+# FROM node:20-alpine AS frontend-builder
+# WORKDIR /app
+# ENV NODE_OPTIONS=--openssl-legacy-provider
+# COPY package*.json ./
+# RUN npm ci --no-audit --no-fund
+# COPY webpack.mix.js ./
+# COPY artisan ./
+# COPY resources ./resources
+# COPY public ./public
+# RUN npm run production
 
 ############################################
 # RUNNER (CI/CD)
@@ -58,7 +59,7 @@ RUN npm run production
 FROM base AS runner
 WORKDIR /var/www
 
-COPY composer.json composer.lock ./
+COPY composer.* ./
 
 # Install dependencies with dev packages (--no-scripts: artisan ainda não existe nesta camada)
 RUN --mount=type=cache,target=/tmp/composer-cache \
@@ -69,7 +70,7 @@ RUN --mount=type=cache,target=/tmp/composer-cache \
     --no-scripts
 
 COPY . .
-COPY --from=frontend-builder /app/public ./public
+# COPY --from=frontend-builder /app/public ./public
 COPY .env.example .env
 
 RUN composer dump-autoload --optimize --no-interaction
@@ -83,7 +84,7 @@ FROM base AS builder
 
 WORKDIR /var/www
 
-COPY composer.json composer.lock ./
+COPY composer.* ./
 
 # Install production dependencies only (--no-scripts: artisan ainda não existe nesta camada)
 RUN --mount=type=cache,target=/tmp/composer-cache \
@@ -97,7 +98,7 @@ RUN --mount=type=cache,target=/tmp/composer-cache \
     --no-scripts
 
 COPY . .
-COPY --from=frontend-builder /app/public ./public
+# COPY --from=frontend-builder /app/public ./public
 
 RUN composer dump-autoload \
     --optimize \
@@ -119,10 +120,6 @@ RUN rm -rf \
     /root/.composer/cache \
     /tmp/*
 RUN rm -f /usr/bin/composer
-
-RUN chown -R www-data:www-data \
-    storage \
-    bootstrap/cache
 
 USER www-data
 EXPOSE 9000

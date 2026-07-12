@@ -1,0 +1,35 @@
+name: php-docker-example
+
+services:
+  ############################################
+  # APP (PHP-FPM)
+  ############################################
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    volumes:
+      - ./example:/var/www/public
+    networks:
+      - app-network
+
+  ############################################
+  # NGINX
+  ############################################
+  nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - "8000:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./example:/var/www/public
+    networks:
+      - app-network
+    depends_on:
+      - app
+
+networks:
+  app-network:
+    driver: bridge
