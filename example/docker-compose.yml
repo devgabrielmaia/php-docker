@@ -6,11 +6,11 @@ services:
   ############################################
   app:
     build:
-      context: .
+      context: ..
       dockerfile: Dockerfile
       target: builder
     volumes:
-      - ./example:/var/www/public
+      - .:/var/www/public
     networks:
       - app-network
 
@@ -22,9 +22,9 @@ services:
     ports:
       - "8000:80"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./example:/var/www/public
+      - ../nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - .:/var/www/public
     networks:
       - app-network
     depends_on:
