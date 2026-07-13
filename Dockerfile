@@ -121,6 +121,8 @@ RUN rm -rf \
     /tmp/*
 RUN rm -f /usr/bin/composer
 
+COPY config/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
+
 USER www-data
 EXPOSE 9000
 CMD ["php-fpm"]
